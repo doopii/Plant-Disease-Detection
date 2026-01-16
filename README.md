@@ -1,4 +1,4 @@
-# 🌿 Leafy Disease Detection
+# 🌿 Plant Disease Detection
 
 A deep learning-based plant disease detection system using MobileNetV3 to identify diseases in chili, pepper, and tomato plants.
 
