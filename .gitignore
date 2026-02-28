@@ -1,0 +1,26 @@
+# Dataset (too large for GitHub - use setup scripts to recreate)
+data/
+
+# Trained models (too large for GitHub)
+models/*.pth
+
+# Virtual environment
+.venv/
+
+# Claude project files
+.claude/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Kaggle cache
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
