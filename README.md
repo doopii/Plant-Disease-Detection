@@ -1,28 +1,30 @@
-# 🌿 Plant Disease Detection
+# Plant Disease Detection
 
 A deep learning-based plant disease detection system using MobileNetV3 to identify diseases in chili, pepper, and tomato plants.
 
-## 📋 Overview
+## Overview
 
 This project uses transfer learning with MobileNetV3 to classify plant diseases across three types of plants:
 - **Chili**: Healthy, Leaf curl, Leaf spot, Whitefly, Yellowish
 - **Pepper (Bell)**: Healthy, Bacterial spot
 - **Tomato**: Healthy, Early blight, Late blight, Bacterial spot, Leaf Mold
 
-## 🚀 Features
+## Features
 
 - Transfer learning using MobileNetV3 Large architecture
 - Multi-class classification (12 disease categories)
+- ~98% validation accuracy
 - Data augmentation for improved model generalization
 - Model checkpointing and backup system
 - GPU acceleration support
+- ONNX and TorchScript exports for mobile deployment
 
-## 📦 Installation
+## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/doopii/Leafy-Disease-Detection.git
-cd Leafy-Disease-Detection
+git clone https://github.com/doopii/Plant-Disease-Detection.git
+cd Plant-Disease-Detection
 ```
 
 2. Install dependencies:
@@ -30,72 +32,98 @@ cd Leafy-Disease-Detection
 pip install -r requirements.txt
 ```
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
-├── main.ipynb                  # Main training notebook
-├── models/                     # Saved model checkpoints
-│   └── plant_disease_mobilenetv3.pth
-├── data/                       # Dataset directory
-│   ├── train/                  # Training images
-│   └── valid/                  # Validation images
-└── requirements.txt            # Python dependencies
+├── notebooks/
+│   ├── 01_data_preparation.ipynb       # Dataset download and setup
+│   ├── 02_exploratory_data_analysis.ipynb
+│   ├── 03_model_training.ipynb         # Model training
+│   ├── 04_model_evaluation.ipynb       # Evaluation and metrics
+│   └── 05_model_conversion.ipynb       # Export for mobile deployment
+├── models/
+│   ├── plant_disease_mobilenetv3.pth           # PyTorch checkpoint
+│   ├── plant_disease_mobilenetv3.onnx          # ONNX export
+│   ├── plant_disease_mobilenetv3.torchscript.pt
+│   ├── plant_disease_mobilenetv3_quantized.torchscript.pt
+│   └── model_metadata.json                     # Class labels and input specs
+├── mobile/
+│   ├── plant_disease_mobilenetv3.onnx          # ONNX model for Flutter/Android
+│   └── model_metadata.json
+├── app.py                  # Gradio web demo
+├── predict.py              # CLI inference script
+├── data/                   # Dataset directory
+│   ├── train/
+│   ├── val/
+│   └── test/
+└── requirements.txt
 ```
 
-## 💻 Usage
+## Usage
 
-1. Open and run the Jupyter notebook:
+Run predictions on an image:
 ```bash
-jupyter notebook main.ipynb
+python predict.py path/to/image.jpg
 ```
 
-2. The notebook includes:
-   - Dataset download and preparation
-   - Data augmentation and preprocessing
-   - Model training with MobileNetV3
-   - Model evaluation and testing
-   - Inference on new images
+Launch the Gradio web demo:
+```bash
+python app.py
+```
 
-## 🎯 Model Architecture
+To retrain or explore the model, run the notebooks in order (01 through 05).
+
+## Model Architecture
 
 - **Base Model**: MobileNetV3 Large (pretrained on ImageNet)
+- **Classifier**: Linear(960 → 1280) → Hardswish → Dropout(0.3) → Linear(1280 → 12)
 - **Input Size**: 224x224 pixels
 - **Output Classes**: 12 disease categories
 - **Optimizer**: Adam
 - **Loss Function**: CrossEntropyLoss
 
-## 📊 Dataset
+## Mobile Deployment (Flutter/Android)
+
+The `mobile/` folder contains everything needed for on-device inference:
+- `plant_disease_mobilenetv3.onnx` — use with the [`onnxruntime`](https://pub.dev/packages/onnxruntime) Flutter package
+- `model_metadata.json` — class labels and normalization parameters (mean/std)
+
+Input preprocessing: resize to 224x224, normalize with mean `[0.485, 0.456, 0.406]` and std `[0.229, 0.224, 0.225]`.
+
+## Dataset
 
 The model is trained on combined datasets from Kaggle:
 - New Plant Diseases Dataset (Tomato & Pepper)
 - Chili Plant Disease Dataset
 - Additional Chili Plant Diseases Dataset
 
-## 🔧 Training
+## Training
 
 The training process includes:
 - Data augmentation (rotation, flipping, color jittering)
 - Normalization using ImageNet statistics
-- Learning rate scheduling
+- Learning rate scheduling with ReduceLROnPlateau
+- Early stopping (patience=5)
 - Automatic model checkpointing
 
-## 📈 Results
+## Results
 
-Model checkpoints are saved in the `models/` directory with automatic backup functionality.
+| Format | Size | Inference Speed |
+|---|---|---|
+| PyTorch | 16.30 MB | baseline |
+| TorchScript | 16.72 MB | 1.23x faster |
+| Quantized TorchScript | 13.20 MB | 1.32x faster |
+| ONNX Runtime | 16.08 MB | 4.03x faster |
 
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to submit issues or pull requests.
-
-## 📝 License
+## License
 
 This project is open source and available under the MIT License.
 
-## 👤 Author
+## Author
 
 Created by [doopii](https://github.com/doopii)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Datasets from Kaggle contributors
 - PyTorch and torchvision teams
