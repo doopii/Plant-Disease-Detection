@@ -1,0 +1,11 @@
+tensorflow
+tf-keras
+onnx
+onnxruntime
+onnx2tf
+onnxsim
+onnxoptimizer
+onnx-graphsurgeon
+sng4onnx
+ai-edge-litert
+sne4onnx
